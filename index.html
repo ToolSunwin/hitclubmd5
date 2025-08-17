@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Lịch sử Tài Xỉu MD5</title>
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      font-family: Consolas, monospace;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #00ffcc;
+    }
+    .session {
+      background: #1a1a1a;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 5px;
+      border-left: 4px solid #00ffcc;
+    }
+    .ketqua {
+      font-weight: bold;
+    }
+    .tai {
+      color: #00ff66;
+    }
+    .xiu {
+      color: #ff4444;
+    }
+    .md5 {
+      font-size: 12px;
+      color: #999;
+      margin-top: 4px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <h2>Lịch sử Tài Xỉu MD5</h2>
+  <div id="history">Đang tải dữ liệu...</div>
+
+  <script>
+    const API_URL = "https://historymd5-hitclub.onrender.com/txmd5"; // ⚡ Thay bằng link Render API của bạn
+
+    async function loadHistory() {
+      try {
+        const res = await fetch(API_URL);
+        const json = await res.json();
+        const data = json.data; // lấy hết từ API
+
+        let html = "";
+        data.forEach(item => {
+          const ketquaClass = item.Ket_qua === "Tài" ? "tai" : "xiu";
+          html += `
+            <div class="session">
+              <div>- Phiên: ${item.Phien}</div>
+              <div class="ketqua">Kết quả: <span class="${ketquaClass}">${item.Ket_qua}</span></div>
+              <div>Xúc xắc: [${item.Xuc_xac_1}]-[${item.Xuc_xac_2}]-[${item.Xuc_xac_3}] (Tổng: ${item.Tong})</div>
+              <div class="md5">MD5: ${item.Ma_MD5 || "Không có"}</div>
+            </div>
+          `;
+        });
+
+        document.getElementById("history").innerHTML = html || "Không có dữ liệu";
+      } catch (err) {
+        document.getElementById("history").innerHTML = "Lỗi tải dữ liệu!";
+        console.error(err);
+      }
+    }
+
+    // Gọi lần đầu và auto reload mỗi 10s
+    loadHistory();
+    setInterval(loadHistory, 3000);
+  </script>
+</body>
+</html>
